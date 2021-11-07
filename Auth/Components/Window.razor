@@ -1,0 +1,19 @@
+﻿@namespace Auth.Components
+<div class="window" style="width: 300px">
+  <div class="title-bar">
+    <div class="title-bar-text">Login</div>
+    <div class="title-bar-controls">
+      <button aria-label="Minimize"></button>
+      <button aria-label="Maximize"></button>
+      <button aria-label="Close"></button>
+    </div>
+  </div>
+  <div class="window-body">
+    @ChildContent
+  </div>
+</div>
+
+@code {
+  [Parameter]
+  public RenderFragment? ChildContent { get; set; }
+}
