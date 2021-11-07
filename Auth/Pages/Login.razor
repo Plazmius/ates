@@ -1,0 +1,24 @@
+﻿@page "/login"
+@using Auth.Persistence.Models
+@using Microsoft.AspNetCore.Identity
+@using Auth.Models
+@using Auth.Components
+
+@inject SignInManager<Popug> SignInManager
+
+<Window>
+<EditForm Model="model" OnValidSubmit="@HandleValidSubmit">
+    <InputText  name="username" @bind-Value="model.Username" placeholder="your name" />
+    <InputText  name="password"  @bind-Value="model.Password" type="password" placeholder="password" />
+    <button type="submit" elevation="2">login</button>
+</EditForm>
+</Window>
+
+@code {
+    private LoginInputModel model = new();
+    private async Task HandleValidSubmit()
+    {
+        var result = await SignInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: true);
+        
+    }
+}
