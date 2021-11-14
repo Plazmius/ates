@@ -1,0 +1,21 @@
+version: '3.4'
+networks:
+  isolation-network:
+    driver: bridge
+services:
+  tasks:
+    networks:
+      - isolation-network
+    image: ${DOCKER_REGISTRY-}tasks
+    build:
+      context: .
+      dockerfile: Tasks/Dockerfile
+
+  auth:
+    networks:
+      - isolation-network
+    image: ${DOCKER_REGISTRY-}auth
+    build:
+      context: .
+      dockerfile: Auth/Dockerfile
+
