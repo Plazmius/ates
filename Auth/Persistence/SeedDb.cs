@@ -10,8 +10,18 @@ namespace Auth.Persistence
 {
     public class SeedDb
     {
-        public static void EnsureSeedData(IServiceProvider serviceProvider)
+        public static void EnsureSeedData(string connectionString)
         {
+            var services = new ServiceCollection();
+            services.AddLogging();
+            services.AddDbContext<AuthContext>(options =>
+                options.UseNpgsql(connectionString));
+
+            services.AddIdentity<Popug, Role>()
+                .AddEntityFrameworkStores<AuthContext>()
+                .AddDefaultTokenProviders();
+
+            using var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var context = scope.ServiceProvider.GetService<AuthContext>();
             context.Database.Migrate();
@@ -47,7 +57,7 @@ namespace Auth.Persistence
         private static void Seed<T>(Func<Task<T>> findInstruction, Func<Task<IdentityResult>> seedInstruction)
         {
             var findResult = findInstruction().Result;
-            if (findResult == null)
+            if (findResult != null)
             {
                 return;
             }
