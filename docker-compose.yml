@@ -1,21 +1,31 @@
 version: '3.4'
-networks:
-  isolation-network:
-    driver: bridge
+
 services:
   tasks:
-    networks:
-      - isolation-network
     image: ${DOCKER_REGISTRY-}tasks
     build:
       context: .
       dockerfile: Tasks/Dockerfile
-
   auth:
-    networks:
-      - isolation-network
     image: ${DOCKER_REGISTRY-}auth
     build:
       context: .
       dockerfile: Auth/Dockerfile
-
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.0
+  broker:
+    image: confluentinc/cp-server:7.0.0
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.0.0
+  connect:
+    image: cnfldemos/cp-server-connect-datagen:0.5.0-6.2.0
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.0.0
+  ksqldb-server:
+    image: confluentinc/cp-ksqldb-server:7.0.0
+  ksqldb-cli:
+    image: confluentinc/cp-ksqldb-cli:7.0.0
+  ksql-datagen:
+    image: confluentinc/ksqldb-examples:7.0.0
+  rest-proxy:
+    image: confluentinc/cp-kafka-rest:7.0.0
