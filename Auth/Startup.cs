@@ -2,12 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System;
 using System.Linq;
 using System.Text.Json;
 using ated_id.Services;
 using IdentityServer4;
 using Auth.Persistence;
 using Auth.Persistence.Models;
+using Confluent.Kafka;
+using Confluent.SchemaRegistry;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SchemaRegistry.Producers;
 
 namespace ated_id
 {
@@ -91,6 +95,23 @@ namespace ated_id
             //
             // services.AddScoped<IProfileService, IdentityProfileService>();
             services.AddScoped<IClaimsService, PopugClaimsService>();
+            AddKafka(services);
+        }
+
+        private void AddKafka(IServiceCollection services)
+        {
+            var kafkaConfig = Configuration.GetSection(nameof(KafkaConfig)).Get<KafkaConfig>();
+            Console.WriteLine($"Kafka server: ${kafkaConfig.BootstrapServers}");
+            services.AddSingleton<IEventProducer>(new KafkaEventProducer(
+                new ProducerConfig()
+                {
+                    BootstrapServers = kafkaConfig.BootstrapServers
+                },
+                new SchemaRegistryConfig
+                {
+                    Url = kafkaConfig.SchemaRegistryUrl
+                }
+            ));
         }
 
         public void Configure(IApplicationBuilder app)
@@ -102,7 +123,6 @@ namespace ated_id
             }
 
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseCors("AllowClientCors");
             app.UseIdentityServer();

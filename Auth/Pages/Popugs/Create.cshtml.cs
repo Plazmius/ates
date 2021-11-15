@@ -9,16 +9,22 @@ using Auth.Persistence;
 using Auth.Persistence.Models;
 using Microsoft.AspNetCore.Identity;
 using Auth.Pages.Popugs;
+using IdentityModel;
+using SchemaRegistry;
+using SchemaRegistry.Producers;
+using User;
 
 namespace Auth.Pages
 {
     public class CreateModel : PageModel
     {
         private readonly UserManager<Popug> userManager;
+        private IEventProducer _producer;
 
-        public CreateModel(UserManager<Popug> userManager)
+        public CreateModel(UserManager<Popug> userManager, IEventProducer producer)
         {
             this.userManager = userManager;
+            _producer = producer;
         }
 
         public IActionResult OnGet()
@@ -49,7 +55,14 @@ namespace Auth.Pages
             };
             await userManager.CreateAsync(user, Popug.Password);
             await userManager.AddToRoleAsync(user, Popug.Role);
-
+            await _producer.AddEventAsync(Topics.UsersStreaming,
+                $"{user.Email}-${DateTime.UtcNow.ToEpochTime()}",
+                new UserCreated()
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Role = Popug.Role
+                });
             return RedirectToPage("./Index");
         }
     }

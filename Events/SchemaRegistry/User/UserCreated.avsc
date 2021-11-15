@@ -1,0 +1,19 @@
+﻿{
+  "namespace": "SchemaRegistry.User",
+  "type": "record",
+  "name": "User.Created",
+  "fields": [
+    {
+      "name": "Email",
+      "type": "string"
+    },
+    {
+      "name": "UserName",
+      "type": "string"
+    },
+    {
+      "name": "Role",
+      "type": "string"
+    }
+  ]
+}
