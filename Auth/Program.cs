@@ -76,6 +76,11 @@ namespace ated_id
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureAppConfiguration(options =>
+                    {
+                        options.AddJsonFile("appsettings.json");
+                        options.AddEnvironmentVariables();
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }

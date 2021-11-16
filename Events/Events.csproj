@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <RootNamespace>SchemaRegistry</RootNamespace>
+        <LangVersion>9</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" Version="1.8.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="SchemaRegistry" />
+    </ItemGroup>
+
+</Project>
